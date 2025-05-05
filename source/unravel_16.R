@@ -94,5 +94,5 @@ art_generator <- function(seed) {
 
 # make art ----------------------------------------------------------------
 
-seeds <- default_seeds(version)
+seeds <- default_seeds(version) + 85
 for(s in seeds) art_generator(s)

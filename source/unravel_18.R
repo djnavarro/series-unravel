@@ -2,7 +2,7 @@
 # set up ------------------------------------------------------------------
 
 name    <- "unravel" 
-version <- 11
+version <- 18
 
 # define common helper functions
 source(here::here("source", "common.R"), echo = FALSE)
@@ -24,7 +24,7 @@ colourise_data <- function(df, pal, px) {
 }
 
 transform_data <- function(df, ncl) {
-  df <- rank(abs(df))
+  df <- rank(df)
   df <- df - min(df)
   df <- df / max(df)
   df <- as.integer(df * (ncl - 1)) + 1
@@ -57,14 +57,16 @@ expand_palette <- function(shades, to = 1024L) {
   (colorRampPalette(shades))(to)
 }
 
-generate_palette <- function(seed) {
+generate_palette <- function(seed, to = 1024L) {
   set.seed(seed)
-  here::here("source", "palettes", "palette_04.csv") |> 
-    readr::read_csv(show_col_types = FALSE) |> 
+  here::here("source", "palettes") |> 
+    fs::dir_ls() |> 
+    purrr::map(\(f) readr::read_csv(f, show_col_types = FALSE)) |> 
+    dplyr::bind_rows() |> 
     dplyr::slice_sample(n = 1) |> 
     unlist() |> 
     sample() |> 
-    expand_palette(to = 1024L)
+    expand_palette(to)
 }
 
 art_generator <- function(seed) {
@@ -74,11 +76,11 @@ art_generator <- function(seed) {
   output <- output_path(name, version, seed, "jpg")
   message("generating ", output)
   
-  layers <- 50
+  layers <- 6
   iter   <- 1000 * 10^6
   px     <- 2000  
-  zoom   <- 0.2
-
+  zoom   <- .08
+  
   shades <- generate_palette(seed)
 
   img <- generate_data(seed, iter, layers, px, zoom)
@@ -92,5 +94,5 @@ art_generator <- function(seed) {
 
 # make art ----------------------------------------------------------------
 
-seeds <- default_seeds(version) + 100
+seeds <- default_seeds(version)
 for(s in seeds) art_generator(s)
