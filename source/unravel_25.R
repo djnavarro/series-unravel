@@ -2,7 +2,7 @@
 # set up ------------------------------------------------------------------
 
 name    <- "unravel" 
-version <- 23
+version <- 25
 
 # define common helper functions
 source(here::here("source", "common.R"), echo = FALSE)
@@ -67,10 +67,10 @@ generate_palette <- function(seed) {
     fs::dir_ls() |> 
     purrr::map(\(f) readr::read_csv(f, show_col_types = FALSE)) |> 
     dplyr::bind_rows() |> 
-    dplyr::slice_sample(n = 1) |> 
+    dplyr::slice_sample(n = 1L) |> 
     unlist() |> 
     sample() |> 
-    thicken_palette(n = 8L) |> 
+    thicken_palette(n = 2L) |> 
     expand_palette(to = 1024L)
 }
 
@@ -81,7 +81,7 @@ art_generator <- function(seed) {
   output <- output_path(name, version, seed, "jpg")
   message("generating ", output)
   
-  layers <- 8
+  layers <- 20
   iter   <- 1000 * 10^6
   px     <- 2000  
   zoom   <- .125

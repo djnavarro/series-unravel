@@ -60,7 +60,7 @@ NumericMatrix art_data(int iter, int layers, int pixels, double zoom) {
   for (int t = 1; t < iter; t++) {
 
     layer = rand() % layers;  // which affine transform to use?
-    variant = rand() % 3;     // which variant function to use?
+    variant = rand() % 4;     // which variant function to use?
 
     // coordinates after random transform
     x = x_old + coeffs(0, layer) * x_old + coeffs(1, layer) * y_old + coeffs(2, layer);
@@ -79,12 +79,14 @@ NumericMatrix art_data(int iter, int layers, int pixels, double zoom) {
       y = s * sin(y * pi);
       z = sin(x + z);
       
-    } else {
+    } else if (variant == 2) {
       s = pow(x*x + y*y + z*z, 1/3);
       x = x + s/2;
       y = y + s/2;
       z = z + s;
       
+    } else {
+      // passthrough to plot in affine transformed coords
     }
 
     // compute indices to be updated
